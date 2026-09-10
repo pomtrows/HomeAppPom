@@ -1,0 +1,56 @@
+Je souhaite créer une application web de dashboard familial responsive (optimisée pour ordinateurs et smartphones) avec un thème dark moderne et épuré.
+
+### 🌐 Contraintes techniques et architecture générale :
+1. **Déploiement & Infrastructure (Crucial) :**
+   - **Auto-hébergement unique :** L'application sera hébergée sur une instance Coolify (déploiement automatique via Nixpacks à partir d'un dépôt GitHub).
+   - **Zero dépendance externe complexe :** L'ensemble de l'application (Frontend + Backend + Base de données embarquée type SQLite / LiteFS / PocketBase / file-based DB) doit tourner de manière autonome dans un seul conteneur Docker généré par Coolify, sans nécessiter de services tiers payants (pas de Supabase/Firebase cloud).
+2. **Multi-utilisateurs & Synchronisation :**
+   - L'application est partagée par la famille. Tous les membres voient les mêmes données.
+   - Toute modification (ex: cocher un article, modifier un repas) doit être immédiatement sauvegardée en base de données et synchronisée/visible par les autres membres.
+3. **Design & UX :**
+   - Interface type **Dashboard** avec des cartes/widgets interactifs.
+   - **Thème Dark** par défaut (couleurs sombres, bon contraste, design moderne type Tailwind CSS).
+   - **Responsive :** Grille fluide s'adaptant parfaitement aux écrans mobiles (1 colonne) et desktop (multi-colonnes).
+   - **Navigation :** Chaque widget sur la page d’accueil sert de carte récapitulative et permet d’accéder à sa page dédiée détaillée lorsqu’on clique dessus.
+
+---
+
+### 🧩 Description des Widgets & Fonctionnalités :
+
+1. **Météo du jour (Page dédiée & Widget) :**
+   - Le widget affiche la météo actuelle et un résumé rapide.
+   - *Note : J'ai déjà une partie du code pour la météo que nous intégrerons ensemble.*
+
+2. **Principaux cours de Bourse :**
+   - Affichage des indices majeurs ou d'une liste d'actions configurables (ex: CAC 40, S&P 500, Crypto/BTC) sous forme de tickers ou mini-cartes avec variation du jour (vert/rouge). Appel à une API AlphaVantage possible si besoin.
+
+3. **Station Service la plus proche :**
+   - Géolocalisation du navigateur (`navigator.geolocation`) pour récupérer les coordonnées GPS.
+   - Appel à une API publique pour trouver la station la plus proche et afficher l'adresse et le prix des carburants.
+   - *Note : J'ai déjà une partie du code pour la station service que nous intégrerons ensemble.*
+
+4. **Liste de Courses (Temps réel / DB) :**
+   - Ajout et suppression d'articles.
+   - Ajout et suppression de catégories.
+   - Cases à cocher/décocher pour les articles : **Les articles cochés ne doivent être ni grisés, ni barrés, ni déplacés** (ils conservent leur position initiale dans la liste).
+   - Navigation par **catégories dans un bandeau/filtre** pour trier facilement les rayons (ex: Fruits & Légumes, Frais, Épicerie, etc.).
+   - Persistance en base de données.
+
+5. **Menus des 11 Prochains Soirs (Temps réel / DB) :**
+   - Gestion **exclusive des repas du soir**.
+   - Affichage glissant : **le soir même + les 10 prochains soirs** (soit 11 jours au total).
+   - **Nettoyage automatique :** Tout jour passé est automatiquement purgé/masqué de l'affichage, ce qui fait apparaître un nouveau jour vide à la fin de la période (à J+10) prêt à être renseigné par la famille.
+   - Édition facile et directe depuis l'interface.
+
+6. **Liens Rapides / Favoris Épinglés :**
+   - Cartes permettant d'épingler des liens web personnalisés (titre, URL, icône/favicône).
+   - Possibilité d'ajouter / modifier / supprimer un lien.
+
+---
+
+### 🚀 Ce que je te demande pour commencer :
+
+1. Propose-moi la **stack technique recommandée la plus adaptée** pour faire tourner un projet monolithique complet (ex: **Next.js + SQLite/Prisma** ou **SvelteKit + SQLite** ou **Node/Express + SQLite**) garantissant un déploiement zéro-tracas en un seul conteneur sur Coolify.
+2. Donne-moi le **schéma de la base de données** (tables/collections SQLite) adapté pour la liste de courses (avec catégories), les menus glissants par date, et les liens épinglés.
+3. Donne-moi le **code de la structure globale du projet** et la **page d'accueil (Dashboard)** avec le thème dark Tailwind CSS et des composants modulaires.
+4. Pose des questions si besoin d'éclaircissements
