@@ -5,15 +5,15 @@ import path from "path";
 import * as schema from "./schema";
 import { SEED_MEALS } from "./seed-meals";
 
-const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data");
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
-const DB_PATH = path.join(DATA_DIR, "app.db");
-
 function createDatabase() {
-  const sqlite = new Database(DB_PATH);
+  const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), "data");
+  if (!fs.existsSync(DATA_DIR)) {
+    fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+
+  const DB_PATH = path.join(DATA_DIR, "app.db");
+  const sqlite = new Database(DB_PATH, { timeout: 10000 });
+  sqlite.pragma("busy_timeout = 10000");
   sqlite.pragma("journal_mode = WAL");
   sqlite.pragma("foreign_keys = ON");
 
@@ -75,12 +75,24 @@ function createDatabase() {
   return drizzle(sqlite, { schema });
 }
 
+type DrizzleDb = ReturnType<typeof createDatabase>;
+
 const globalForDb = globalThis as unknown as {
-  __db?: ReturnType<typeof createDatabase>;
+  __db?: DrizzleDb;
 };
 
-export const db = globalForDb.__db ?? createDatabase();
-
-if (process.env.NODE_ENV !== "production") {
-  globalForDb.__db = db;
+export function getDb(): DrizzleDb {
+  if (!globalForDb.__db) {
+    globalForDb.__db = createDatabase();
+  }
+  return globalForDb.__db;
 }
+
+export const db: DrizzleDb = new Proxy({} as DrizzleDb, {
+  get(_target, prop) {
+    const instance = getDb() as any;
+    const value = instance[prop];
+    return typeof value === "function" ? value.bind(instance) : value;
+  },
+});
+
